@@ -319,6 +319,11 @@ class Board_write extends CB_Controller
 				'rules' => 'trim|required',
 			),
 			array(
+				'field' => 'post_title_sub',
+				'label' => '부 제목',
+				'rules' => 'trim|required',
+			),
+			array(
 				'field' => 'post_content',
 				'label' => '내용',
 				'rules' => 'trim|required',
@@ -791,6 +796,8 @@ class Board_write extends CB_Controller
 			$metadata = array();
 
 			$post_title = $this->input->post('post_title', null, '');
+			$post_title_sub = $this->input->post('post_title_sub', null, '');
+			$post_order = $this->input->post('post_order', null, '');
 			$post_content = $this->input->post('post_content', null, '');
 			if (element('save_external_image', $board)) {
 				$post_content = $this->imagelib->replace_external_image($post_content);
@@ -800,6 +807,8 @@ class Board_write extends CB_Controller
 				'post_num' => $post_num,
 				'post_reply' => $post_reply,
 				'post_title' => $post_title,
+				'post_title_sub' => $post_title_sub,
+				'post_order' => $post_order,
 				'post_content' => $post_content,
 				'post_html' => $content_type,
 				'post_datetime' => cdate('Y-m-d H:i:s'),
@@ -1666,6 +1675,11 @@ class Board_write extends CB_Controller
 				'rules' => 'trim|required',
 			),
 			array(
+				'field' => 'post_title_sub',
+				'label' => '부 제목',
+				'rules' => 'trim|required',
+			),
+			array(
 				'field' => 'post_content',
 				'label' => '내용',
 				'rules' => 'trim|required',
@@ -2095,6 +2109,8 @@ class Board_write extends CB_Controller
 			$content_type = $use_dhtml ? 1 : 0;
 
 			$post_title = $this->input->post('post_title', null, '');
+			$post_title_sub = $this->input->post('post_title_sub', null, '');
+			$post_order = $this->input->post('post_order', null, '');
 			$post_content = $this->input->post('post_content', null, '');
 			if (element('save_external_image', $board)) {
 				$post_content = $this->imagelib->replace_external_image($post_content);
@@ -2103,6 +2119,8 @@ class Board_write extends CB_Controller
 			$metadata = array();
 			$updatedata = array(
 				'post_title' => $post_title,
+				'post_title_sub' => $post_title_sub,
+				'post_order' => $post_order,
 				'post_content' => $post_content,
 				'post_html' => $content_type,
 				'post_updated_datetime' => cdate('Y-m-d H:i:s'),

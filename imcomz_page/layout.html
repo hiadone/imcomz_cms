@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<title>IMCOMZ</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/font-nanum/1.0/nanumgothic/nanumgothic.css">
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/css/swiper.min.css">
+	<link rel="stylesheet" href="css/common.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/js/swiper.min.js"></script>
+</head>
+
+<body>
+	<!-- header -->
+	<header>
+		<div class="inner_center">
+			<h1 class="h_logo"><a href=""><img src="images/logo.png" alt="아이엠컴즈"></a></h1>
+			<nav class="gnb">
+				<button class="btn_nav open"><img src="images/h_icon_ham.svg" alt="메뉴버튼"></button>
+				<ul class="gnb_ul">
+					<li class="gnb_li"><a href="#main">HOME</a></li>
+					<li class="gnb_li"><a href="#about">ABOUT</a></li>
+					<li class="gnb_li"><a href="#service">SERVICE</a></li>
+					<li class="gnb_li"><a href="#contact">CONTACT</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<!-- header end -->
+	<div class="wrap">
+		
+		
+	</div>
+	<footer></footer>
+	<script>
+		$(function(){
+			//모바일 헤더 여닫기
+			var $gnbUl = $('.gnb .gnb_ul')
+			var $gnbBtn = $('.gnb .btn_nav')
+			function openGnb(){
+				$gnbUl.slideDown(400,function(){
+					$gnbBtn.removeClass('open');
+					$(this).stop(true,true);
+				});
+			}
+			function closeGnb(){
+				$gnbUl.slideUp(400,function(){
+					$gnbBtn.addClass('open');
+					$(this).stop(true,true);
+				});
+			}
+			
+			$gnbBtn.on('click',function(){
+				var gnbBtnClass = $(this).hasClass('open');
+				if(gnbBtnClass == true){
+					openGnb();
+				}else{
+					closeGnb();
+				}
+				
+			});
+			
+		//end
+		});
+	
+	</script>
+</body>
+</html>

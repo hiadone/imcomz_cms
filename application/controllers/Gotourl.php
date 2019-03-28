@@ -98,6 +98,6 @@ class Gotourl extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
 
-		redirect(prep_url(element('ban_url', $banner)));
+		redirect(prep_url(base_url(element('ban_url', $banner))));
 	}
 }

@@ -508,6 +508,7 @@ class Board extends CI_Controller
 		$forder = element('forder', $config) ? element('forder', $config) : 'DESC';
 		$limit = element('limit', $config);
 		$length = element('length', $config);
+		$length_sub = element('length_sub', $config);
 		$is_gallery = element('is_gallery', $config);
 		$image_width = element('image_width', $config);
 		$image_height = element('image_height', $config);
@@ -524,6 +525,178 @@ class Board extends CI_Controller
 			$cache_exclude_brd_id = is_array($exclude_brd_id) ? implode('-', $exclude_brd_id) : $exclude_brd_id;
 			$cache_exclude_brd_key = is_array($exclude_brd_key) ? implode('-', $exclude_brd_key) : $exclude_brd_key;
 			$cachename = 'latest/latest-s-' . $skin . '-i-' . $cache_brd_id . '-k-' . $cache_brd_key . '-l-' . $cache_exclude_brd_id . '-k-' . $cache_exclude_brd_key . '-l-' . $limit . '-t-' . $length . '-g-' . $is_gallery . '-w-' . $image_width . '-h-' . $image_height . '-p-' . $period_second;
+			$html = $this->CI->cache->get($cachename);
+			if ($html) {
+				return $html;
+			}
+		}
+
+		if (empty($skin)) {
+			$skin = 'basic';
+		}
+		$view['view']['config'] = $config;
+		$view['view']['length'] = $length;
+		$view['view']['length_sub'] = $length_sub;
+		if ($brd_key) {
+			if (is_array($brd_key)) {
+				foreach ($brd_key as $v) {
+					$brd_id[] = $this->CI->board->item_key('brd_id', $v);
+				}
+			} else {
+				$brd_id = $this->CI->board->item_key('brd_id', $brd_key);
+			}
+		}
+		if ($exclude_brd_key) {
+			if (is_array($exclude_brd_key)) {
+				foreach ($exclude_brd_key as $v) {
+					$exclude_brd_id[] = $this->CI->board->item_key('brd_id', $v);
+				}
+			} else {
+				$exclude_brd_id = $this->CI->board->item_key('brd_id', $exclude_brd_key);
+			}
+		}
+		if ($brd_id && ! is_array($brd_id)) {
+			$view['view']['board'] = $this->CI->board->item_all($brd_id);
+		}
+		$where = array();
+		$where['post_del'] = 0;
+		$where['post_secret'] = 0;
+
+		$this->CI->db->from('post');
+		$this->CI->db->where($where);
+
+		if ($brd_id) {
+			if (is_array($brd_id)) {
+				$this->CI->db->group_start();
+				foreach ($brd_id as $v) {
+					$this->CI->db->or_where('brd_id', $v);
+				}
+				$this->CI->db->group_end();
+			} else {
+				$this->CI->db->where('brd_id', $brd_id);
+			}
+		}
+
+		if ($exclude_brd_id) {
+			if (is_array($exclude_brd_id)) {
+				foreach ($exclude_brd_id as $v) {
+					$this->CI->db->where('brd_id <>', $v);
+				}
+			} else {
+				$this->CI->db->where('brd_id <>', $exclude_brd_id);
+			}
+		}
+
+		if ($period_second) {
+			$post_start_datetime = cdate('Y-m-d H:i:s', ctimestamp() - $period_second);
+			$this->CI->db->where('post_datetime >=', $post_start_datetime);
+		}
+
+		if ($findex && $forder) {
+			$forder = (strtoupper($forder) === 'ASC') ? 'ASC' : 'DESC';
+			$this->CI->db->order_by($findex, $forder);
+		}
+		if (is_numeric($limit)) {
+			$this->CI->db->limit($limit);
+		}
+		$result = $this->CI->db->get();
+		$view['view']['latest'] = $latest = $result->result_array();
+
+		$view['view']['latest_limit'] = $limit;
+
+		$this->CI->load->library('accesslevel');
+
+		$check = array(
+			'group_id' => element('bgr_id', $view['view']['board']),
+			'board_id' => element('brd_id', $view['view']['board']),
+		);
+
+		$can_write = $this->CI->accesslevel->is_accessable(
+			element('access_write', $view['view']['board']),
+			element('access_write_level', $view['view']['board']),
+			element('access_write_group', $view['view']['board']),
+			$check
+		);
+
+		$view['view']['write_url'] = '';
+		if ($can_write === true) 
+			$view['view']['write_url'] = write_url($brd_key);
+
+
+		if ($latest && is_array($latest)) {
+			foreach ($latest as $key => $value) {
+				$view['view']['latest'][$key]['name'] = display_username(
+					element('post_userid', $value),
+					element('post_nickname', $value)
+				);
+				$brd_key = $this->CI->board->item_id('brd_key', element('brd_id', $value));
+				$view['view']['latest'][$key]['url'] = post_url($brd_key, element('post_id', $value));
+				$view['view']['latest'][$key]['title'] = $length ? cut_str(element('post_title', $value), $length) : element('post_title', $value);
+				$view['view']['latest'][$key]['title_sub'] = $length_sub ? cut_str(element('post_title_sub', $value), $length) : element('post_title_sub', $value);
+				$view['view']['latest'][$key]['display_datetime'] = display_datetime(element('post_datetime', $value), '');
+				$view['view']['latest'][$key]['category'] = '';
+				if (element('post_category', $value)) {
+						$view['view']['latest'][$key]['category'] = $this->CI->Board_category_model->get_category_info(element('brd_id', $value), element('post_category', $value));
+				}
+				if ($is_gallery) {
+					if (element('post_image', $value)) {
+						$imagewhere = array(
+							'post_id' => element('post_id', $value),
+							'pfi_is_image' => 1,
+						);
+						$file = $this->CI->Post_file_model->get_one('', '', $imagewhere, '', '', 'pfi_id', 'ASC');
+						if (element('pfi_filename', $file)) {
+							$view['view']['latest'][$key]['thumb_url'] = thumb_url('post', element('pfi_filename', $file), $image_width, $image_height);
+						}
+					} else {
+						$thumb_url = get_post_image_url(element('post_content', $value), $image_width, $image_height);
+						$view['view']['latest'][$key]['thumb_url'] = $thumb_url ? $thumb_url : thumb_url('', '', $image_width, $image_height);
+					}
+				}
+			}
+		}
+		$view['view']['skinurl'] = base_url( VIEW_DIR . 'latest/' . $skin);
+		$html = $this->CI->load->view('latest/' . $skin . '/latest', $view, true);
+
+		if ($cache_minute> 0) {
+			check_cache_dir('latest');
+			$this->CI->cache->save($cachename, $html, $cache_minute);
+		}
+
+		return $html;
+	}
+
+	public function latest_portfolio($config)
+	{
+
+
+		$view = array();
+		$view['view'] = array();
+
+		$this->CI->load->model( array('Board_category_model', 'Post_file_model'));
+
+		$skin = element('skin', $config);
+		$brd_id = element('brd_id', $config);
+		$brd_key = element('brd_key', $config);
+		$exclude_brd_id = element('exclude_brd_id', $config);
+		$exclude_brd_key = element('exclude_brd_key', $config);
+		$findex = element('findex', $config) ? element('findex', $config) : 'post_order';
+		$forder = element('forder', $config) ? element('forder', $config) : 'DESC';
+		
+		$length = element('length', $config);
+		$is_gallery = element('is_gallery', $config);
+		$image_width = element('image_width', $config);
+		$image_height = element('image_height', $config);
+		$period_second = element('period_second', $config);
+		$cache_minute = element('cache_minute', $config);
+
+		
+		if ($cache_minute> 0) {
+			$cache_brd_id = is_array($brd_id) ? implode('-', $brd_id) : $brd_id;
+			$cache_brd_key = is_array($brd_key) ? implode('-', $brd_key) : $brd_key;
+			$cache_exclude_brd_id = is_array($exclude_brd_id) ? implode('-', $exclude_brd_id) : $exclude_brd_id;
+			$cache_exclude_brd_key = is_array($exclude_brd_key) ? implode('-', $exclude_brd_key) : $exclude_brd_key;
+			$cachename = 'latest/latest_portfolio-s-' . $skin . '-i-' . $cache_brd_id . '-k-' . $cache_brd_key . '-l-' . $cache_exclude_brd_id . '-k-' . $cache_exclude_brd_key . '-l-t-' . $length . '-g-' . $is_gallery . '-w-' . $image_width . '-h-' . $image_height . '-p-' . $period_second;
 			$html = $this->CI->cache->get($cachename);
 			if ($html) {
 				return $html;
@@ -594,26 +767,26 @@ class Board extends CI_Controller
 			$forder = (strtoupper($forder) === 'ASC') ? 'ASC' : 'DESC';
 			$this->CI->db->order_by($findex, $forder);
 		}
-		if (is_numeric($limit)) {
-			$this->CI->db->limit($limit);
-		}
+		
 		$result = $this->CI->db->get();
-		$view['view']['latest'] = $latest = $result->result_array();
+		$view['view']['latest_portfolio'] = $latest_portfolio = $result->result_array();
 
-		$view['view']['latest_limit'] = $limit;
-		if ($latest && is_array($latest)) {
-			foreach ($latest as $key => $value) {
-				$view['view']['latest'][$key]['name'] = display_username(
+		
+		if ($latest_portfolio && is_array($latest_portfolio)) {
+			foreach ($latest_portfolio as $key => $value) {
+				$view['view']['latest_portfolio'][$key]['name'] = display_username(
 					element('post_userid', $value),
 					element('post_nickname', $value)
 				);
 				$brd_key = $this->CI->board->item_id('brd_key', element('brd_id', $value));
-				$view['view']['latest'][$key]['url'] = post_url($brd_key, element('post_id', $value));
-				$view['view']['latest'][$key]['title'] = $length ? cut_str(element('post_title', $value), $length) : element('post_title', $value);
-				$view['view']['latest'][$key]['display_datetime'] = display_datetime(element('post_datetime', $value), '');
-				$view['view']['latest'][$key]['category'] = '';
+				$view['view']['latest_portfolio'][$key]['url'] = post_url($brd_key, element('post_id', $value));
+				$view['view']['latest_portfolio'][$key]['title'] = $length ? cut_str(element('post_title', $value), $length) : element('post_title', $value);
+				
+				$view['view']['latest_portfolio'][$key]['title_sub'] = element('post_title_sub', $value);
+				$view['view']['latest_portfolio'][$key]['display_datetime'] = display_datetime(element('post_datetime', $value), '');
+				$view['view']['latest_portfolio'][$key]['category'] = '';
 				if (element('post_category', $value)) {
-						$view['view']['latest'][$key]['category'] = $this->CI->Board_category_model->get_category_info(element('brd_id', $value), element('post_category', $value));
+						$view['view']['latest_portfolio'][$key]['category'] = $this->CI->Board_category_model->get_category_info(element('brd_id', $value), element('post_category', $value));
 				}
 				if ($is_gallery) {
 					if (element('post_image', $value)) {
@@ -623,17 +796,18 @@ class Board extends CI_Controller
 						);
 						$file = $this->CI->Post_file_model->get_one('', '', $imagewhere, '', '', 'pfi_id', 'ASC');
 						if (element('pfi_filename', $file)) {
-							$view['view']['latest'][$key]['thumb_url'] = thumb_url('post', element('pfi_filename', $file), $image_width, $image_height);
+							
+							$view['view']['latest_portfolio'][$key]['thumb_url'] = thumb_url('post', element('pfi_filename', $file), $image_width, $image_height);
 						}
 					} else {
 						$thumb_url = get_post_image_url(element('post_content', $value), $image_width, $image_height);
-						$view['view']['latest'][$key]['thumb_url'] = $thumb_url ? $thumb_url : thumb_url('', '', $image_width, $image_height);
+						$view['view']['latest_portfolio'][$key]['thumb_url'] = $thumb_url ? $thumb_url : thumb_url('', '', $image_width, $image_height);
 					}
 				}
 			}
 		}
 		$view['view']['skinurl'] = base_url( VIEW_DIR . 'latest/' . $skin);
-		$html = $this->CI->load->view('latest/' . $skin . '/latest', $view, true);
+		$html = $this->CI->load->view('latest/' . $skin . '/latest_portfolio', $view, true);
 
 		if ($cache_minute> 0) {
 			check_cache_dir('latest');
@@ -641,9 +815,8 @@ class Board extends CI_Controller
 		}
 
 		return $html;
+	
 	}
-
-
 	/**
 	 * 최근 댓글을 가져옵니다
 	 */

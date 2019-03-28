@@ -99,6 +99,13 @@ class Banner extends CB_Controller
 			$where['ban_activated'] = '0';
 		}
 
+		if ($this->input->get('ban_btn_activated') === 'Y') {
+			$where['ban_btn_activated'] = '1';
+		}
+		if ($this->input->get('ban_btn_activated') === 'N') {
+			$where['ban_btn_activated'] = '0';
+		}
+
 		$result = $this->{$this->modelname}
 			->get_admin_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
 		$list_num = $result['total_rows'] - ($page - 1) * $per_page;
@@ -137,7 +144,7 @@ class Banner extends CB_Controller
 		/**
 		 * 쓰기 주소, 삭제 주소등 필요한 주소를 구합니다
 		 */
-		$search_option = array('ban_title' => '이미지 설명', 'ban_url' => '이미지 URL');
+		$search_option = array('ban_title' => '카피라이트', 'ban_url' => '이미지 URL');
 		$view['view']['skeyword'] = ($sfield && array_key_exists($sfield, $search_option)) ? $skeyword : '';
 		$view['view']['search_option'] = search_option($search_option, $sfield);
 		$view['view']['listall_url'] = admin_url($this->pagedir);
@@ -225,13 +232,14 @@ class Banner extends CB_Controller
 			),
 			array(
 				'field' => 'ban_title',
-				'label' => '이미지 설명',
+				'label' => '카피라이트',
 				'rules' => 'trim|required',
 			),
+			
 			array(
 				'field' => 'ban_url',
 				'label' => '이미지 URL',
-				'rules' => 'trim|valid_url',
+				'rules' => 'trim',
 			),
 			array(
 				'field' => 'ban_target',
@@ -261,6 +269,11 @@ class Banner extends CB_Controller
 			array(
 				'field' => 'ban_activated',
 				'label' => '배너활성화',
+				'rules' => 'trim',
+			),
+			array(
+				'field' => 'ban_btn_activated',
+				'label' => '버튼활성화',
 				'rules' => 'trim',
 			),
 		);
@@ -305,8 +318,8 @@ class Banner extends CB_Controller
 				$uploadconfig['upload_path'] = $upload_path;
 				$uploadconfig['allowed_types'] = 'jpg|jpeg|png|gif';
 				$uploadconfig['max_size'] = '2000';
-				$uploadconfig['max_width'] = '1000';
-				$uploadconfig['max_height'] = '1000';
+				$uploadconfig['max_width'] = '2000';
+				$uploadconfig['max_height'] = '1500';
 				$uploadconfig['encrypt_name'] = true;
 
 				$this->upload->initialize($uploadconfig);
@@ -377,11 +390,13 @@ class Banner extends CB_Controller
 			$ban_height = $this->input->post('ban_height') ? $this->input->post('ban_height') : 0;
 			$ban_order = $this->input->post('ban_order') ? $this->input->post('ban_order') : 0;
 			$ban_activated = $this->input->post('ban_activated') ? 1 : 0;
+			$ban_btn_activated = $this->input->post('ban_btn_activated') ? 1 : 0;
 
 			$updatedata = array(
 				'ban_start_date' => $ban_start_date,
 				'ban_end_date' => $ban_end_date,
 				'ban_title' => $this->input->post('ban_title', null, ''),
+				'ban_sub_title' => $this->input->post('ban_sub_title', null, ''),
 				'bng_name' => $this->input->post('bng_name', null, ''),
 				'ban_url' => $this->input->post('ban_url', null, ''),
 				'ban_target' => $this->input->post('ban_target', null, ''),
@@ -390,6 +405,7 @@ class Banner extends CB_Controller
 				'ban_height' => $ban_height,
 				'ban_order' => $ban_order,
 				'ban_activated' => $ban_activated,
+				'ban_btn_activated' => $ban_btn_activated,
 			);
 			if ($this->input->post('ban_image_del')) {
 				$updatedata['ban_image'] = '';

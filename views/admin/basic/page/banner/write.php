@@ -2,6 +2,7 @@
 	<div class="box-table">
 		<?php
 		echo validation_errors('<div class="alert alert-warning" role="alert">', '</div>');
+		echo show_alert_message(element('message', $view), '<div class="alert alert-auto-close alert-dismissible alert-info"><button type="button" class="close alertclose" >&times;</button>', '</div>');
 		$attributes = array('class' => 'form-horizontal', 'name' => 'fadminwrite', 'id' => 'fadminwrite');
 		echo form_open_multipart(current_full_url(), $attributes);
 		?>
@@ -24,9 +25,15 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">이미지 설명</label>
+				<label class="col-sm-2 control-label">카피라이트</label>
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="ban_title" value="<?php echo set_value('ban_title', element('ban_title', element('data', $view))); ?>" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">부 카피라이트</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="ban_sub_title" value="<?php echo set_value('ban_sub_title', element('ban_sub_title', element('data', $view))); ?>" />
 				</div>
 			</div>
 			<div class="form-group">
@@ -109,6 +116,17 @@
 					</label>
 					<label class="radio-inline" for="ban_activated_0">
 						<input type="radio" name="ban_activated" id="ban_activated_0" value="0" <?php echo set_radio('ban_activated', '0', (element('ban_activated', element('data', $view)) !== '1' ? true : false)); ?> /> 비활성
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">view 버튼 활성화</label>
+				<div class="col-sm-10">
+					<label class="radio-inline" for="ban_btn_activated_1">
+						<input type="radio" name="ban_btn_activated" id="ban_btn_activated_1" value="1" <?php echo set_radio('ban_btn_activated', '1', (element('ban_btn_activated', element('data', $view)) === '1' ? true : false)); ?> /> 활성
+					</label>
+					<label class="radio-inline" for="ban_btn_activated_0">
+						<input type="radio" name="ban_btn_activated" id="ban_btn_activated_0" value="0" <?php echo set_radio('ban_btn_activated', '0', (element('ban_btn_activated', element('data', $view)) !== '1' ? true : false)); ?> /> 비활성
 					</label>
 				</div>
 			</div>

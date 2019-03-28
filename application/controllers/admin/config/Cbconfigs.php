@@ -1102,4 +1102,181 @@ class Cbconfigs extends CB_Controller
 		$this->layout = element('layout_skin_file', element('layout', $view));
 		$this->view = element('view_skin_file', element('layout', $view));
 	}
+
+
+	/**
+	 * 기본환경설정 > 파비콘등록 설정입니다
+	 */
+	public function intro()
+	{
+
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_admin_config_layoutskin_favicon';
+		$this->load->event($eventname);
+
+		$view = array();
+		$view['view'] = array();
+
+		// 이벤트가 존재하면 실행합니다
+		$view['view']['event']['before'] = Events::trigger('before', $eventname);
+
+		/**
+		 * Validation 라이브러리를 가져옵니다
+		 */
+		$this->load->library('form_validation');
+
+		/**
+		 * 전송된 데이터의 유효성을 체크합니다
+		 */
+		$config = array(
+			array(
+				'field' => 'is_submit',
+				'label' => '전송',
+				'rules' => 'trim|numeric',
+			),
+			array(
+				'field' => 'site_intro1_del',
+				'label' => '삭제',
+				'rules' => 'trim|numeric',
+			),
+			array(
+				'field' => 'site_intro2_del',
+				'label' => '삭제',
+				'rules' => 'trim|numeric',
+			),
+		);
+		$this->form_validation->set_rules($config);
+		$form_validation = $this->form_validation->run();
+		$file_error = '';
+		$site_intro1 = '';
+		$orig_intro1 = '';
+		$site_intro2 = '';
+		$orig_intro2 = '';
+
+		if ($form_validation) {
+			$this->load->library('upload');
+			if (isset($_FILES) && isset($_FILES['site_intro1']) && isset($_FILES['site_intro1']['name']) && $_FILES['site_intro1']['name']) {
+				$upload_path = config_item('uploads_dir') . '/intro/';
+				if (is_dir($upload_path) === false) {
+					mkdir($upload_path, 0707);
+					$file = $upload_path . 'index.php';
+					$f = @fopen($file, 'w');
+					@fwrite($f, '');
+					@fclose($f);
+					@chmod($file, 0644);
+				}
+
+				$uploadconfig = array();
+				$uploadconfig['upload_path'] = $upload_path;
+				$uploadconfig['allowed_types'] = '*';
+				
+				$uploadconfig['encrypt_name'] = true;
+
+				$this->upload->initialize($uploadconfig);
+
+				if ($this->upload->do_upload('site_intro1')) {
+					$filedata = $this->upload->data();
+					$site_intro1 = element('file_name', $filedata);
+					$orig_intro1 = element('orig_name', $filedata);
+				} else {
+					$file_error = $this->upload->display_errors();
+
+				}
+			}
+
+			if (isset($_FILES) && isset($_FILES['site_intro2']) && isset($_FILES['site_intro2']['name']) && $_FILES['site_intro2']['name']) {
+				$upload_path = config_item('uploads_dir') . '/intro/';
+				if (is_dir($upload_path) === false) {
+					mkdir($upload_path, 0707);
+					$file = $upload_path . 'index.php';
+					$f = @fopen($file, 'w');
+					@fwrite($f, '');
+					@fclose($f);
+					@chmod($file, 0644);
+				}
+
+				$uploadconfig = array();
+				$uploadconfig['upload_path'] = $upload_path;
+				$uploadconfig['allowed_types'] = '*';
+				$uploadconfig['encrypt_name'] = true;
+
+				$this->upload->initialize($uploadconfig);
+
+				if ($this->upload->do_upload('site_intro2')) {
+					$filedata = $this->upload->data();
+					$site_intro2 = element('file_name', $filedata);
+					$orig_intro2 = element('orig_name', $filedata);
+				} else {
+					$file_error = $this->upload->display_errors();
+
+				}
+			}
+		}
+
+		/**
+		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
+		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
+		 */
+		if ($form_validation === false OR $file_error !== '') {
+
+			// 이벤트가 존재하면 실행합니다
+			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
+
+			$view['view']['message'] = $file_error;
+
+		} else {
+			/**
+			 * 유효성 검사를 통과한 경우입니다.
+			 * 즉 데이터의 insert 나 update 의 process 처리가 필요한 상황입니다
+			 */
+
+			// 이벤트가 존재하면 실행합니다
+			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
+
+			$savedata = array();
+
+			if ($site_intro1) {
+				$savedata['site_intro1'] = $site_intro1;
+				$savedata['orig_intro1'] = $orig_intro1;
+			} elseif ($this->input->post('site_intro1_del')) {
+				$savedata['site_intro1'] = '';
+				$savedata['orig_intro1'] = '';
+			}
+			if ($site_intro1 OR $this->input->post('site_intro1_del')) {
+				@unlink(config_item('uploads_dir') . '/intro/' . $this->cbconfig->item('site_intro1'));
+			}
+
+			if ($site_intro2) {
+				$savedata['site_intro2'] = $site_intro2;
+				$savedata['orig_intro2'] = $orig_intro2;
+			} elseif ($this->input->post('site_intro2_del')) {
+				$savedata['site_intro2'] = '';
+				$savedata['orig_intro2'] = '';
+			}
+			if ($site_intro2 OR $this->input->post('site_intro2_del')) {
+				@unlink(config_item('uploads_dir') . '/intro/' . $this->cbconfig->item('site_intro2'));
+			}
+
+
+			$this->Config_model->save($savedata);
+			$view['view']['alert_message'] = '소개서파일이 저장되었습니다';
+		}
+
+		$getdata = $this->Config_model->get_all_meta();
+		$view['view']['data'] = $getdata;
+
+		$view['view']['download_link'] = site_url('postact/intro_download');
+		
+		// 이벤트가 존재하면 실행합니다
+		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
+
+		/**
+		 * 어드민 레이아웃을 정의합니다
+		 */
+		$layoutconfig = array('layout' => 'layout', 'skin' => 'intro');
+		$view['layout'] = $this->managelayout->admin($layoutconfig, $this->cbconfig->get_device_view_type());
+		$this->data = $view;
+		$this->layout = element('layout_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view));
+	}
 }

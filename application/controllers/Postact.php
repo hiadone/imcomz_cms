@@ -478,6 +478,26 @@ class Postact extends CB_Controller
 
 
 	/**
+	 * 첨부파일 다운로드 하기
+	 */
+	public function intro_download($site_intro='',$orig_intro='')
+	{
+
+		if (empty($site_intro) || empty($orig_intro) ) {
+			show_404();
+		}
+		$this->load->helper('download');
+		$this->load->model('Config_model');
+		$pfi_filename = $this->Config_model->item($site_intro);
+		$pfi_originname = $this->Config_model->item($orig_intro);
+		// Read the file's contents
+		$data = file_get_contents(config_item('uploads_dir') . '/intro/' . $pfi_filename);
+		$name = $pfi_originname;
+		force_download($name, $data);
+
+	}
+
+	/**
 	 * 링크 클릭 하기
 	 */
 	public function link($link_id = 0)

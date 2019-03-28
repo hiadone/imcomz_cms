@@ -45,6 +45,7 @@ class Managelayout extends CI_Controller
 		}
 		$data['admin_page_menu'] = array();
 		foreach($menu_files as $file){
+			if($file ==="admin_menu_500" || $file ==="admin_menu_600" || $file ==="admin_menu_700"|| $file ==="admin_menu_800") continue;
 			$CI->load->config($file);
 			$res = config_item('admin_page_menu');
 			$data['admin_page_menu'] += config_item('admin_page_menu');

@@ -35,7 +35,8 @@
 						<tr>
 							<th><a href="<?php echo element('ban_id', element('sort', $view)); ?>">번호</a></th>
 							<th>이미지</th>
-							<th><a href="<?php echo element('ban_title', element('sort', $view)); ?>">이미지설명</a></th>
+							<th><a href="<?php echo element('ban_title', element('sort', $view)); ?>">카피라이트</a></th>
+							<th><a href="<?php echo element('ban_sub_title', element('sort', $view)); ?>">부 카피라이트</a></th>
 							<th><a href="<?php echo element('bng_name', element('sort', $view)); ?>">배너 위치</a></th>
 							<th>표시기기</th>
 							<th><a href="<?php echo element('ban_url', element('sort', $view)); ?>">URL</a></th>
@@ -54,10 +55,13 @@
 					if (element('list', element('data', $view))) {
 						foreach (element('list', element('data', $view)) as $result) {
 					?>
+
+					
 						<tr>
 							<td><?php echo number_format(element('num', $result)); ?></td>
 							<td><?php if (element('thumb_url', $result)) {?><img src="<?php echo element('thumb_url', $result); ?>" alt="<?php echo html_escape(element('ban_title', $result)); ?>" title="<?php echo html_escape(element('ban_title', $result)); ?>" class="thumbnail mg0" style="width:80px;" /><?php } ?></td>
 							<td><?php echo html_escape(element('ban_title', $result)); ?></td>
+							<td><?php echo html_escape(element('ban_sub_title', $result)); ?></td>
 							<td><?php echo html_escape(element('bng_name', $result)); ?></td>
 							<td class="text-center"><?php echo element('ban_device', $result); ?></td>
 							<td><?php if (element('ban_url', $result)) { ?><a href="<?php echo goto_url(element('ban_url', $result)); ?>" target="_blank"><?php echo html_escape(element('ban_url', $result)); ?></a> <?php } ?></td>

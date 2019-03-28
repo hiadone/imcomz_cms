@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<title>IMCOMZ</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/font-nanum/1.0/nanumgothic/nanumgothic.css">
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/css/swiper.min.css">
+	<link rel="stylesheet" href="css/common.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/js/swiper.min.js"></script>
+</head>
+
+<body>
+	<!-- header -->
+	<header>
+		<div class="inner_center">
+			<h1 class="h_logo"><a href=""><img src="images/logo.png" alt="아이엠컴즈"></a></h1>
+			<nav class="gnb">
+				<button class="btn_nav open"><img src="images/h_icon_ham.svg" alt="메뉴버튼"></button>
+				<ul class="gnb_ul">
+					<li class="gnb_li"><a href="#main">HOME</a></li>
+					<li class="gnb_li"><a href="#about">ABOUT</a></li>
+					<li class="gnb_li"><a href="#service">SERVICE</a></li>
+					<li class="gnb_li"><a href="#contact">CONTACT</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<!-- header end -->
+	<div class="wrap">
+		<section class="post">
+			<h2 class="hidden">portfolio</h2>
+			<div class="inner_center">
+				<div class="media_container">
+					<img src="http://placehold.it/1600x900" alt="">
+<!--			<iframe width="1120" height="630" src="https://www.youtube.com/embed/zsb6mdMBvDU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>-->
+<!--			<video src="media/video.mp4" controls autoplay></video>-->
+				</div>
+				<div class="post_txt">
+					<div class="tit02">
+						<h3 class="tit">광고주명</h3>
+						<p class="sub_tit">광고주 캠페인명</p>
+					</div>
+					<div class="txt">
+						광고주에 대한 내용을 작성하세요 <br>
+						예수는 옷을 끝에 노년에게서 약동하다. 그들은 이상이 쓸쓸한 사막이다. 같이, 인생을 자신과 청춘 새가 일월과 되는 말이다. <br>
+						얼마나 가진 청춘에서만 오직 꾸며 운다. 가치를 듣기만 천고에 끓는다.<br> 
+						희망의 인간이 것이 인간의 광야에서 구하지 인류의 두기 칼이다. 오직 있는 스며들어 많이 쓸쓸하랴?<br>
+						천자만홍이 이상은 그것은 동산에는 심장의 보이는 있는가? 구하기 가진 피에 하는 인간은 과실이 고동을 듣는다.
+					</div>
+				</div>
+				<div class="media_container">
+					<img src="http://placehold.it/1200x1800" alt="">
+				</div>
+			</div>
+			
+		</section>
+<!--
+		<div class="btn_box inner_center">
+			<a href="" class="btn_post btn_prev">&lt; PREV</a>
+			<a href="" class="btn_post btn_next">NEXT &gt;</a>
+		</div>
+-->
+	</div>
+	<footer></footer>
+	
+	<script>
+		$(function(){
+			//모바일 헤더 여닫기
+			var $gnbUl = $('.gnb .gnb_ul')
+			var $gnbBtn = $('.gnb .btn_nav')
+			function openGnb(){
+				$gnbUl.slideDown(400,function(){
+					$gnbBtn.removeClass('open');
+					$(this).stop(true,true);
+				});
+			}
+			function closeGnb(){
+				$gnbUl.slideUp(400,function(){
+					$gnbBtn.addClass('open');
+					$(this).stop(true,true);
+				});
+			}
+			
+			$gnbBtn.on('click',function(){
+				var gnbBtnClass = $(this).hasClass('open');
+				if(gnbBtnClass == true){
+					openGnb();
+				}else{
+					closeGnb();
+				}
+				
+			});
+			
+		//end
+		});
+	
+	</script>
+</body>
+</html>
