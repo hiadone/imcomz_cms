@@ -224,6 +224,16 @@ header .gnb_li a:hover,
 header .gnb_li.active a{
     color: #ea5759;
 }
+/* footer */
+footer{
+	padding: 30px 0;
+	background-color: #0f0f0f;
+}
+footer .copyright{
+	text-align: center;
+	font-size: 16px;
+	color: #434343;
+}
 /* main_bnr */
 .main_bnr .bnr_list {
     height: 660px;
@@ -535,34 +545,34 @@ header .gnb_li.active a{
     transform: translateX(-50%);
 }
 .contact .download_intro {
-    padding: 40px 0;
+    padding: 40px 0 0;
     text-align: center;
     font-family: 'Apple SD Gothic Neo','Malgun Gothic',arial,sans-serif;
 }
 .download_intro .btn_download {
     display: inline-block;
-    width: 360px;
-    padding: 8px 0;
-    margin: 0 40px;
+    width: 240px;
+    padding: 6px 0;
+    margin: 0 24px;
     overflow: hidden;
     border: 2px solid #ea5759;
 }
 .download_intro .triangle,
 .download_intro .txt{
-    height: 50px;
-    line-height: 50px;
+    height: 42px;
+    line-height: 42px;
 }
 .download_intro .txt{
     display: inline-block;
-    width: calc(100% - 70px);
+    width: calc(100% - 57px);
     float: left;
-    font-size: 28px;
+    font-size: 18px;
     color: #ea5759;
     font-weight: 100;
 }
 .download_intro .triangle{
     display: inline-block;
-    width: 70px;
+    width: 57px;
     float: right;
     box-sizing: border-box;
     border-left: 1px solid #ea5759;
@@ -572,9 +582,9 @@ header .gnb_li.active a{
     display: inline-block;
     width: 0;
     height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 10px solid #ea5759;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid #ea5759;
 }
 /* post portfolio */
 .post {
@@ -735,25 +745,6 @@ header .gnb_li.active a{
     .work_list .list_li:nth-child(4){
         margin-top: 40px;
     }
-    /* download btn */
-    .download_intro .btn_download {
-        width: 40%;
-        max-width: 300px;
-        padding: 5px 0;
-        margin: 0 1.5%;
-    }
-    .download_intro .triangle,
-    .download_intro .txt{
-        height: 50px;
-        line-height: 50px;
-    }
-    .download_intro .txt{
-        width: calc(100% - 60px);
-        font-size: 20px;
-    }
-    .download_intro .triangle{
-        width: 60px;
-    }
     /* post */
     .post {
         padding: 3% 0;
@@ -761,6 +752,7 @@ header .gnb_li.active a{
 /* end */
 }
 @media screen and (max-width:680px) and (min-width:1px){
+	
     /*common*/
     .tit01 {
         padding-top: 10%;
@@ -825,6 +817,13 @@ header .gnb_li.active a{
         width: 60%;
         font-size: 16px;
     }
+	/* footer */
+	footer{
+		padding: 8% 0;
+	}
+	footer .copyright{
+		font-size: 14px;
+	}
     /* main_bnr */
     .main_bnr .bnr_list {
         height: 61.8vw;
@@ -995,33 +994,17 @@ header .gnb_li.active a{
         transform: translateX(-50%);
     }
     .contact .download_intro {
-        padding: 40px 0;
+        padding: 8% 0 0;
         text-align: center;
         font-family: 'Apple SD Gothic Neo','Malgun Gothic',arial,sans-serif;
     }
     /* download button */
     .download_intro .btn_download {
         display: block;
-        width: 75%;
-        padding: 5px 0;
-        max-width: 320px;
         margin: 0 auto 3%;
     }
     .download_intro .btn_download:last-child{
         margin-bottom: 0;
-    }
-    .download_intro .triangle,
-    .download_intro .txt{
-        height: 45px;
-        line-height: 45px;
-    }
-    .download_intro .txt{
-        width: calc(100% - 56px);
-        float: left;
-        font-size: 20px;
-    }
-    .download_intro .triangle{
-        width: 56px;
     }
     /* post */
     .post {
@@ -1044,6 +1027,10 @@ header .gnb_li.active a{
     }
 	.tit03{
 		font-size: 24px;
+	}
+	/* footer */
+	footer .copyright{
+		font-size: 13px;
 	}
 	/* bnr */
 	.main_bnr .bnr_li .mid_box{

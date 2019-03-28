@@ -213,6 +213,9 @@
 			<li class="btn_download"><a href="javascript:document.location.href='/postact/intro_download/site_intro2/orig_intro2'"><strong class="txt">모바일 쿠폰 소개서</strong><span class="hidden">다운로드하기</span><span class="triangle"></span></a></li>
 		</ul>
 	</section>
+	<footer>
+		<div class="copyright">Copyright &copy; 2019 IMCOMZ All Right Reserved.</div>
+	</footer>
 </div>
 
 	<script>
